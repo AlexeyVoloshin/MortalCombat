@@ -5,7 +5,7 @@ const player1 = {
 	weapon: ['ax', 'harpoon', 'gun'],
 	attack: function() {
 		console.log(this.name + ' Fight...');
-	}
+	},
 }
 
 const player2 = {
@@ -15,16 +15,16 @@ const player2 = {
 	weapon: ['ax', 'harpoon', 'gun'],
 	attack: function() {
 		console.log(this.name + ' Fight...');
-	}
+	},
 }
 
 function createPlayer(player, character) {
-	const $player1 = document.createElement('div');
-	$player1.classList = player;
+	const $root = document.querySelector('.root .arenas');
+	const $player = document.createElement('div');
+	$player.classList = player;
 	
 	const $progressbar = document.createElement('div');
 	$progressbar.classList = 'progressbar';
-	$player1.appendChild($progressbar);
 
 	const $life = document.createElement('div');
 	$life.classList = 'life';
@@ -38,15 +38,14 @@ function createPlayer(player, character) {
 
 	const $character = document.createElement('div');
 	$character.classList = 'character';
-	$player1.appendChild($character);
 
 	const $img = document.createElement('img');
 	$img.src = character.img;
-	
 	$character.appendChild($img);
-	
-	const $root = document.querySelector('.root .arenas');
-	$root.appendChild($player1);
+
+	$player.appendChild($progressbar);
+	$player.appendChild($character);
+	$root.appendChild($player);
 };
 
 createPlayer('player1', player1);
