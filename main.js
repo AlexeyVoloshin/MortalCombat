@@ -8,8 +8,8 @@ const player1 = {
 	hp: 100,
 	img: {
 		fightingStance: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
-		dizzy: 'http://www.mortalkombatwarehouse.com/mk3/sonya/sprites/dizzy/a1.gif',
-		win: 'http://www.mortalkombatwarehouse.com/mk3/sonya/sprites/victory/08.png',
+		dizzy: './img/character/dizzy/sonya-dizzy.gif',
+		wins: './img/character/wins/sonya-wins.png',
 	},
 	weapon: ['ax', 'harpoon', 'gun'],
 	attack: function() {
@@ -24,7 +24,7 @@ const player2 = {
 	img: { 
 		fightingStance: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
 		dizzy: 'http://reactmarathon-api.herokuapp.com/assets/liukang-dizzy.gif',
-		win: 'http://www.mortalkombatwarehouse.com/mk3/liukang/sprites/victory/14.png',	
+		wins: './img/character/wins/liukang-wins.png',	
 	},
 	weapon: ['ax', 'harpoon', 'gun'],
 	attack: function() {
@@ -69,7 +69,7 @@ function changeImg(player, statePlayer) {
 			$img.src = player.img.dizzy;
 			break;
 		case 'wins':
-			$img.src = player.img.win;
+			$img.src = player.img.wins;
 			break;
 		default:
 			$img.src = player.img.fightingStance;
