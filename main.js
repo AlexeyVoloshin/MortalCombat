@@ -6,30 +6,28 @@ const player1 = {
 	player: 1,
 	name: 'SONYA',
 	hp: 100,
-	img: {
-		fightingStance: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
-		dizzy: 'http://www.mortalkombatwarehouse.com/mk3/sonya/sprites/dizzy/a1.gif',
-		win: 'http://www.mortalkombatwarehouse.com/mk3/sonya/sprites/victory/08.png',
-	},
+	img: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
 	weapon: ['ax', 'harpoon', 'gun'],
 	attack: function() {
 		console.log(this.name + ' Fight...');
 	},
+	changeHP: changeHP,
+	elHP: elHP,
+	renderHP,
 };
 
 const player2 = {
 	player: 2,
 	name: 'LIUKANG',
 	hp: 100,
-	img: { 
-		fightingStance: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
-		dizzy: 'http://reactmarathon-api.herokuapp.com/assets/liukang-dizzy.gif',
-		win: 'http://www.mortalkombatwarehouse.com/mk3/liukang/sprites/victory/14.png',	
-	},
+	img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
 	weapon: ['ax', 'harpoon', 'gun'],
 	attack: function() {
 		console.log(this.name + ' Fight...');
 	},
+	changeHP: changeHP,
+	elHP: elHP,
+	renderHP: renderHP,
 };
 
 function createElement(tag, className) {
@@ -40,17 +38,17 @@ function createElement(tag, className) {
 	return $tag;
 };
 
-function createPlayer(character) {
-	const $player = createElement('div', 'player' + character.player);
+function createPlayer() {
+	const $player = createElement('div', 'player' + this.player);
 	const $progressbar = createElement('div', 'progressbar');
 	const $character = createElement('div', 'character');
 	const $life = createElement('div', 'life');
 	const $name = createElement('div', 'name');
 	const $img = createElement('img');
 
-	$life.style.width = character.hp + '%';
-	$name.innerText = character.name;
-	$img.src = character.img.fightingStance;
+	$life.style.width = this.hp + '%';
+	$name.innerText = this.name;
+	$img.src = this.img;
 
 	$progressbar.appendChild($name);
 	$progressbar.appendChild($life);
@@ -62,78 +60,33 @@ function createPlayer(character) {
 	return $player;
 };
 
-function changeImg(player, statePlayer) {
-	const $img = document.querySelector('.player'+player.player+ ' img');
-	switch (statePlayer) {
-		case 'dizzy':
-			$img.src = player.img.dizzy;
-			break;
-		case 'wins':
-			$img.src = player.img.win;
-			break;
-		default:
-			$img.src = player.img.fightingStance;
-			break;
+function changeHP(randomNum) {
+	this.hp -= randomNum;
+
+	if (this.hp <= 0) {
+		this.hp = 0;
 	}
-}
+};
 
-function changeHPView(player) {
-	const $playerLife = document.querySelector('.player'+player.player+ ' .life');
-	$playerLife.style.width = player.hp + '%';
-}
+function elHP() {
+	const $playerLife = document.querySelector('.player' + this.player + ' .life');
 
-function changeHP(player, randomNum, healthLevel) {
-/* 
-	данная проверка исключает запись отрицательного числа в player.hp, 
-	что не давало зайти в условие player.hp <= 0 c первого раза. 
-*/
-	if (player.hp - randomNum <= 0) {
-		player.hp = 0;
-		if (player.hp === 0 && healthLevel === 0) {
-			$arenas.appendChild(bothLost());
-			changeHPView(player);
-			playerLose(player);
-			return;
-		}
-		if (player.player === 1) {
-			$arenas.appendChild(playerWin(player2));
-			playerLose(player1);
-		} else {
-			$arenas.appendChild(playerWin(player1));
-			playerLose(player2);
-		};
+	return $playerLife;
+};
+
+function renderHP($playerLife) {
+	$playerLife.style.width = this.hp + '%';
+};
+
+function showResultText(name) {
+	$showTitle = createElement('div', 'showTitle');
+	if (name) {
+		$showTitle.innerText = name + ' wins';
 	} else {
-		player.hp -= randomNum;
-	};
-	changeHPView(player);
-};
+		$showTitle.innerText = 'draw';
+	}
 
-function playerLose(player) {
-	changeImg(player, 'dizzy');
-}
-
-function playerWin(player) {
-	changeImg(player, 'wins');
-	$winsTitle = createElement('div', 'winsTitle');
-	$winsTitle.innerText = player.name + ' wins';
-	$randomButton.disabled = true;
-
-	return $winsTitle;
-};
-
-function bothLost() {
-	const $bothLostTitle = createElement('div', 'bothLostTitle');
-	/* 
-		Удаляю дом ноду "winsTitle", потому что не смог решить проблему с добавлением winsTitle 
-		когда у одного из игроков hp == 0 а второму еще не проверил уровень его hp;
-	*/
-	if ($winsTitle !== null) {
-		$arenas.removeChild($winsTitle);
-	};
-	$bothLostTitle.innerText = 'Both Lost';
-	$randomButton.disabled = true;
-
-	return $bothLostTitle;
+	return $showTitle;
 };
 
 function generateRandomNum(min, max) {
@@ -142,10 +95,37 @@ function generateRandomNum(min, max) {
 	return number;
 };
 
+function createReloadButton() {
+	const $reloadWrap = createElement('div', 'reloadWrap');
+	const $button = createElement('button', 'button');
+	$button.innerText = 'Restart';
+	$button.addEventListener('click', function() {
+		window.location.reload();
+	});
+	$reloadWrap.appendChild($button);
+
+	return $reloadWrap;
+};
+
 $randomButton.addEventListener('click', function() {
-	changeHP(player1, generateRandomNum(1, 20), player2.hp);
-	changeHP(player2, generateRandomNum(1, 20), player1.hp);
+	player1.changeHP(generateRandomNum(1, 20));
+	player2.changeHP(generateRandomNum(1, 20));
+	player1.renderHP(player1.elHP());
+	player2.renderHP(player2.elHP());
+
+	if (player1.hp === 0 || player2.hp === 0) {
+		$randomButton.disabled = true;
+		$arenas.appendChild(createReloadButton());
+	};
+
+	if (player1.hp === 0 && player1.hp < player2.hp) {
+		$arenas.appendChild(showResultText(player2.name));
+	} else if (player2.hp === 0 && player2.hp < player1.hp) {
+		$arenas.appendChild(showResultText(player1.name));
+	} else if (player1.hp === 0 && player2.hp === 0) {
+		$arenas.appendChild(showResultText());
+	};
 });
 
-$arenas.appendChild(createPlayer(player1));
-$arenas.appendChild(createPlayer(player2));
+$arenas.appendChild(createPlayer.call(player1));
+$arenas.appendChild(createPlayer.call(player2));
