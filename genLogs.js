@@ -1,15 +1,17 @@
 import { logs } from './logs.js';
 import {getCurrentTime, getRandom} from './utils.js'
-import { GlobalVar } from './globalStor.js';
+import { GlobalVar } from './services/globalStor.js';
 
 const {$chat} = GlobalVar;
 
-function generateLogs(type, player1 = {}, player2 = {}, powerAttack) {
+function generateLogs(type, 
+	{ name: namePlayer1 } = {}, 
+	{ name: namePlayer2,  
+		hp: hpPlayer2 } = {}, 
+		powerAttack) {
+			
 	let text = '';
 	let el = '';
-
-	const {name: namePlayer1} = player1;
-	const {name: namePlayer2, hp: hpPlayer2} = player2;
 	
 	switch (type) {
 		case 'start':
