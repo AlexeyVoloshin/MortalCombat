@@ -17,21 +17,10 @@ export default class Game {
 		this._playerService = new PlayerService();
 	};
 
-	enemyAttack() {
-		const hit = ATTACK[getRandom(ATTACK.length) -1];
-		const defence = ATTACK[getRandom(ATTACK.length) -1];
-	
-		return {
-			value: getRandom(HIT[hit]),
-			hit,
-			defence,
-		};
-	};
 	playerAttack() {
 		const attack = {};
 		for(let item of $formFight) {
 			if (item.checked && item.name === 'hit') {
-				attack.value = getRandom(HIT[item.value]);
 				attack.hit = item.value;
 			};
 			if (item.checked && item.name === 'defence') {
@@ -39,9 +28,9 @@ export default class Game {
 			};
 			item.checked = false;
 		};
-		
 		return attack;
 	};
+
 	checkPowerAttack(hit, value, defence) {
 		if(hit !== defence) {
 			return value;
@@ -50,6 +39,7 @@ export default class Game {
 			return value - penalty;
 		};
 	};
+
 	createPlayer({player, name, hp, img}) {
 		const $player = createElement('div', `player${player}`);
 		const $progressbar = createElement('div', 'progressbar');
@@ -70,18 +60,20 @@ export default class Game {
 		$player.appendChild($character);
 		return $player;
 	};
+
 	showPlayers = () => {
 		$arenas.appendChild(this.createPlayer(this.player1));
 		$arenas.appendChild(this.createPlayer(this.player2));
 	};
+
 	checkUniqueHero = async (player1) => {
 		const player2 = await this._playerService.getRandomEnemy();
-		
 		if (player2.id === player1.id) {
 			this.checkUniqueHero();
 		}
 		return player2;
-	}
+	};
+
 	start = async () => {
 		this.players = await this._playerService.getAllPlayers();
 
@@ -104,17 +96,15 @@ export default class Game {
 
 		$formFight.addEventListener('submit', async (event) => {
 			event.preventDefault();
+			
+			const dataAttack = await this._playerService
+				.postAttack(this.playerAttack());
+			
+			const { defence, hit, value } = dataAttack.player1;
 			const { 
-				hit, 
-				defence, 
-				value
-			} = this.playerAttack();
-		
-			const {	
-				hit: hitEnemy, 
-				defence: defenceEnemy, 
-				value: valueEnemy
-			} = this.enemyAttack();
+				defence: defenceEnemy,
+				hit: hitEnemy,
+				value: valueEnemy } = dataAttack.player2;
 		
 			const powerEnemy = this.checkPowerAttack(
 				hitEnemy, 
