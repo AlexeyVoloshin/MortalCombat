@@ -1,11 +1,10 @@
-import { player1, player2 } from './players.js';
 import createElement from './createElem.js';
 import generateLogs from './genLogs.js';
 import { GlobalVar } from './services/globalStor.js';
 
 const {$arenas, $fightButton} = GlobalVar;
 
-export  function showResult() {
+export  function showResult(player1, player2) {
 	if (player1.hp === 0 || player2.hp === 0) {
 		$fightButton.disabled = true;
 		createReloadButton();

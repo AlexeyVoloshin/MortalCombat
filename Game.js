@@ -1,15 +1,21 @@
 import createElement from './createElem.js';
 import generateLogs from "./genLogs.js";
-import { player1, player2 } from "./players.js";
 import { calcPercent, getRandom } from './utils.js';
 import { showResult } from './show.js';
 import { GlobalVar } from './services/globalStor.js';
+import PlayerService from './services/PlayerService.js';
+import Player from './Player.js';
 
 
 const {$arenas, ATTACK, HIT, $formFight} = GlobalVar;
 
 export default class Game {
-	constructor(){};
+	players = [];
+	player1;
+	player2;
+	constructor(){
+		this._playerService = new PlayerService();
+	};
 
 	enemyAttack() {
 		const hit = ATTACK[getRandom(ATTACK.length) -1];
@@ -33,6 +39,7 @@ export default class Game {
 			};
 			item.checked = false;
 		};
+		
 		return attack;
 	};
 	checkPowerAttack(hit, value, defence) {
@@ -61,24 +68,48 @@ export default class Game {
 	
 		$player.appendChild($progressbar);
 		$player.appendChild($character);
-	
 		return $player;
 	};
 	showPlayers = () => {
-		$arenas.appendChild(this.createPlayer(player1));
-		$arenas.appendChild(this.createPlayer(player2));
+		$arenas.appendChild(this.createPlayer(this.player1));
+		$arenas.appendChild(this.createPlayer(this.player2));
 	};
-	start = () => {
-		generateLogs('start', player1, player2);
-		this.showPlayers();
+	checkUniqueHero = async (player1) => {
+		const player2 = await this._playerService.getRandomEnemy();
 		
-		$formFight.addEventListener('submit', (event) => {
+		if (player2.id === player1.id) {
+			this.checkUniqueHero();
+		}
+		return player2;
+	}
+	start = async () => {
+		this.players = await this._playerService.getAllPlayers();
+
+		const p1 = this.players[getRandom(this.players.length) -1];
+		const p2 = await this.checkUniqueHero(p1);
+
+		this.player1 = new Player({
+			...p1,
+			player: 1,
+			rootSelector: 'arenas',
+		});
+		this.player2 = new Player({
+			...p2,
+			player: 2,
+			rootSelector: 'arenas',
+		});
+
+		generateLogs('start', this.player1, this.player2);
+		this.showPlayers();
+
+		$formFight.addEventListener('submit', async (event) => {
 			event.preventDefault();
 			const { 
 				hit, 
 				defence, 
 				value
 			} = this.playerAttack();
+		
 			const {	
 				hit: hitEnemy, 
 				defence: defenceEnemy, 
@@ -96,24 +127,24 @@ export default class Game {
 				defenceEnemy
 			);
 		
-			player1.changeHP(powerEnemy);
-			player1.renderHP();
-			player2.changeHP(powerPlayer);
-			player2.renderHP();
+			this.player1.changeHP(powerEnemy);
+			this.player1.renderHP();
+			this.player2.changeHP(powerPlayer);
+			this.player2.renderHP();
 		
 			if (defence !== hitEnemy) {
-				generateLogs('hit', player2, player1, powerEnemy);
+				generateLogs('hit', this.player2, this.player1, powerEnemy);
 			} else {
-				generateLogs('defence', player2, player1, powerEnemy);
+				generateLogs('defence', this.player2, this.player1, powerEnemy);
 			};
 		
 			if (defenceEnemy !== hit) {
-				generateLogs('hit', player1, player2, powerPlayer);
+				generateLogs('hit', this.player1, this.player2, powerPlayer);
 			} else {
-				generateLogs('defence', player1, player2, powerPlayer);
+				generateLogs('defence', this.player1, this.player2, powerPlayer);
 			};
 		
-			showResult();
+			showResult(this.player1, this.player2);
 		});
 	};
 };
