@@ -1,5 +1,4 @@
-
-import { GlobalVar } from './globalStor.js';
+import { GlobalVar } from './services/globalStor.js';
 
 const {PENALTY} = GlobalVar;
 
@@ -18,15 +17,4 @@ export function getCurrentTime() {
 export function calcPercent(hit) {
 	const percent = Math.ceil(hit / 100 * PENALTY) -1;
 	return percent;
-};
-
-export function checkPowerAttack(attack, enemy) {
-	const { hit, value } = attack;
-	const { defence } = enemy;
-	if(hit !== defence) {
-		return value;
-	} else {
-		const penalty = calcPercent(value);
-		return value - penalty;
-	};
 };
