@@ -1,7 +1,9 @@
-import routes  from '../routing/routes.js';
-
+import PlayerService from '../services/PlayerService.js';
 const $parent = document.querySelector('.parent');
 const $player = document.querySelector('.player');
+const $enemy = document.querySelector('.enemy');
+const _playerService = new PlayerService();
+
 
 const createElement = (tag, className) => {
     const $tag = document.createElement(tag);
@@ -27,14 +29,26 @@ function createEmptyPlayerBlock() {
     $parent.appendChild(el);
 }
 
+async function createEnemy() {
+	 const enemy = await _playerService.getRandomEnemy();
+	 saveLocalStore('player2', enemy);
+	 const $img = createElement('img');
+	 $img.src = enemy.img;
+	 $enemy.appendChild($img);
+};
+
+function saveLocalStore(player ,item) {
+	localStorage.setItem(player, JSON.stringify(item));
+};
+
 async function init() {
     localStorage.removeItem('player1');
-
-    const players = await fetch('https://reactmarathon-api.herokuapp.com/api/mk/players').then(res => res.json());
+    localStorage.removeItem('player2');
+	 createEnemy();
+	 const players = await _playerService.getAllPlayers();
 
     let imgSrc = null;
     createEmptyPlayerBlock();
-
 
     players.forEach(item => {
         const el = createElement('div', ['character', `div${item.id}`]);
@@ -61,19 +75,14 @@ async function init() {
             // При помощи localStorage.getItem('player1'); т.к. в localStorage кладется строка,
             // то мы должны ее распарсить обратным методом JSON.parse(localStorage.getItem('player1'));
             // но это уже будет в нашем классе Game когда мы инициализируем игроков.
-            localStorage.setItem('player1', JSON.stringify(item));
-				
-
+				saveLocalStore('player1', item);
             el.classList.add('active');
 
             setTimeout(() => {
                 // TODO: Здесь должен быть код который перенаправит вас на ваше игровое поле...
                 //  Пример использования: window.location.pathname = 'arenas.html';
 					window.location.pathname = './src/app/arenas/index.html';
-					
-					console.log('arenas');
-					
-            }, 1000);
+            }, 3000);
         });
 
         img.src = item.avatar;

@@ -66,17 +66,9 @@ export default class Game {
 		$arenas.appendChild(this.createPlayer(this.player2));
 	};
 
-	checkUniqueHero = async (player1) => {
-		const player2 = await this._playerService.getRandomEnemy();
-		if (player2.id === player1.id) {
-			this.checkUniqueHero();
-		}
-		return player2;
-	};
-
 	start = async () => {
 		const p1 = JSON.parse(localStorage.getItem('player1'));
-		const p2 = await this.checkUniqueHero(p1);
+		const p2 = JSON.parse(localStorage.getItem('player2'));
 
 		this.player1 = new Player({
 			...p1,
