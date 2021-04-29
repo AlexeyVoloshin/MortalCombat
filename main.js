@@ -1,4 +1,8 @@
-import Game from './Game.js';
+import routers from './src/app/routing/routes.js'
 
-const game = new Game();
-game.start();
+window.onload = init;
+
+function init() {
+	// routers.navigation();
+	window.location.pathname = './src/app/selectPlayer/index.html';
+}

@@ -1,11 +1,12 @@
-import { player1, player2 } from './players.js';
 import createElement from './createElem.js';
 import generateLogs from './genLogs.js';
 import { GlobalVar } from './services/globalStor.js';
+import routers from './routing/routes.js';
+
 
 const {$arenas, $fightButton} = GlobalVar;
 
-export  function showResult() {
+export  function showResult(player1, player2) {
 	if (player1.hp === 0 || player2.hp === 0) {
 		$fightButton.disabled = true;
 		createReloadButton();
@@ -39,7 +40,9 @@ function createReloadButton() {
 	const $button = createElement('button', 'button');
 	$button.innerText = 'Restart';
 	$button.addEventListener('click', () => {
-		window.location.reload();
+		// window.location.reload();
+		// routers.navigation('');
+		window.location.pathname = './src/app/selectPlayer/index.html';
 	});
 	$reloadWrap.appendChild($button);
 	$arenas.appendChild($reloadWrap);
