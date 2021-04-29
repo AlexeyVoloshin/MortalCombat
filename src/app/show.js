@@ -1,6 +1,8 @@
 import createElement from './createElem.js';
 import generateLogs from './genLogs.js';
 import { GlobalVar } from './services/globalStor.js';
+import routers from './routing/routes.js';
+
 
 const {$arenas, $fightButton} = GlobalVar;
 
@@ -38,7 +40,9 @@ function createReloadButton() {
 	const $button = createElement('button', 'button');
 	$button.innerText = 'Restart';
 	$button.addEventListener('click', () => {
-		window.location.reload();
+		// window.location.reload();
+		// routers.navigation('');
+		window.location.pathname = './src/app/selectPlayer/index.html';
 	});
 	$reloadWrap.appendChild($button);
 	$arenas.appendChild($reloadWrap);

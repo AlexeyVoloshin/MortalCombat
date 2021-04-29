@@ -1,5 +1,5 @@
 import { logs } from './logs.js';
-import {getCurrentTime, getRandom} from './utils.js'
+import {getCurrentTime, getRandom} from './utils/utils.js'
 import { GlobalVar } from './services/globalStor.js';
 
 const {$chat} = GlobalVar;
@@ -21,17 +21,18 @@ function generateLogs(type,
 				el = `<p>${text}</p>`;
 			break;
 		case 'hit':
-			text = logs[type][getRandom(logs[type].length -1)]
-				.replace('[playerKick]', namePlayer1)
-				.replace('[playerDefence]', namePlayer2);
-			el = `<p>${getCurrentTime()} - ${text} -${powerAttack} [${hpPlayer2}/100]</p>`;
-			break; 
 		case 'defence':
 			text = logs[type][getRandom(logs[type].length -1)]
 				.replace('[playerKick]', namePlayer1)
 				.replace('[playerDefence]', namePlayer2);
 			el = `<p>${getCurrentTime()} - ${text} -${powerAttack} [${hpPlayer2}/100]</p>`;
 			break; 
+		
+			// text = logs[type][getRandom(logs[type].length -1)]
+			// 	.replace('[playerKick]', namePlayer1)
+			// 	.replace('[playerDefence]', namePlayer2);
+			// el = `<p>${getCurrentTime()} - ${text} -${powerAttack} [${hpPlayer2}/100]</p>`;
+			// break; 
 		case 'draw':
 			text = logs[type];
 			el = `<p>${text}</p>`;

@@ -1,13 +1,13 @@
 import createElement from './createElem.js';
-import generateLogs from "./genLogs.js";
-import { calcPercent, getRandom } from './utils.js';
+import generateLogs from './genLogs.js';
+import { calcPercent } from './utils/utils.js';
 import { showResult } from './show.js';
-import { GlobalVar } from './services/globalStor.js';
+import { GlobalVar } from '../app/services/globalStor.js';
 import PlayerService from './services/PlayerService.js';
-import Player from './Player.js';
+import Player from './player.js';
 
 
-const {$arenas, ATTACK, HIT, $formFight} = GlobalVar;
+const {$arenas, $formFight} = GlobalVar;
 
 export default class Game {
 	players = [];
@@ -75,9 +75,7 @@ export default class Game {
 	};
 
 	start = async () => {
-		this.players = await this._playerService.getAllPlayers();
-
-		const p1 = this.players[getRandom(this.players.length) -1];
+		const p1 = JSON.parse(localStorage.getItem('player1'));
 		const p2 = await this.checkUniqueHero(p1);
 
 		this.player1 = new Player({

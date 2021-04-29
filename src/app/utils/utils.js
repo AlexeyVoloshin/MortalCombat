@@ -1,4 +1,4 @@
-import { GlobalVar } from './services/globalStor.js';
+import { GlobalVar } from '../services/globalStor.js';
 
 const {PENALTY} = GlobalVar;
 
